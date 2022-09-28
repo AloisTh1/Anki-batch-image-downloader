@@ -117,7 +117,7 @@ def update_notes(mw, notes, addon_window):
         url_list = parse_pictures(query(text=note[src_field]))[:nb_images]
         pictures = url_to_bytes(url_list)
         files_names = img_to_media_folder(
-            mw, pictures, [str(int(start * 10000000)) for _ in range(nb_images)]
+            mw, pictures, [str(int(start * 10000000)) + str(i) for i in range(nb_images)]
         )
 
         for picture in pictures:
