@@ -3,6 +3,27 @@
 Alois Thibert
 alois.devlp@gmail.com
 
+MIT License
+
+Copyright (c) 2022 Alois Thibert
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 """
 
 import re
@@ -117,22 +138,26 @@ def update_notes(mw, notes, addon_window):
         url_list = parse_pictures(query(text=note[src_field]))[:nb_images]
         pictures = url_to_bytes(url_list)
         files_names = img_to_media_folder(
-            mw, pictures, [str(int(start * 10000000)) + str(i) for i in range(nb_images)]
+            mw,
+            pictures,
+            [str(int(start * 10000000)) + str(i) for i in range(nb_images)],
         )
 
         for picture in pictures:
             picture.close()
 
-        mw.taskman.run_on_main(
-            lambda: mw.progress.update(
-                label="{done}/{total} cards. {frac}cards/s. Remainining:~{timeremaining} s".format(
-                    done=i,
-                    total=nb_notes,
-                    frac=round(1 / (time.time() - start), 2),
-                    timeremaining=round((nb_notes - i) * (time.time() - start), 1),
-                ),
+        time_elapsed = time.time() - start
+        if time_elapsed != 0:
+            mw.taskman.run_on_main(
+                lambda: mw.progress.update(
+                    label="{done}/{total} cards. {frac}cards/s. Remainining:~{timeremaining} s".format(
+                        done=i,
+                        total=nb_notes,
+                        frac=round(1 / (time_elapsed), 2),
+                        timeremaining=round((nb_notes - i) * (time_elapsed), 1),
+                    ),
+                )
             )
-        )
 
         _add_pictures_to_card(
             note=note,
